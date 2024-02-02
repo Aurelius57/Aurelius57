@@ -3,6 +3,51 @@
 
 <head>
     <title>Pembelian</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        form {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 5px;
+        }
+
+        div {
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>

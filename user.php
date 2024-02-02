@@ -1,8 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>User</title>
+    <meta charset="UTF-8">
+    <title>Data User</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        form {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 5px;
+        }
+
+        div {
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -10,16 +56,16 @@
 
     <?php
     if ($_SESSION["level"] != "admin") {
-        // jika di sesi ini levelnya bukan admin, akses ditolak
-        echo "Anda tidak dapat mengakses halaman ini";
+        echo "<div>Anda tidak dapat mengakses halaman ini</div>";
         exit;
     }
 
     require "koneksi.php";
 
-    // cari semua user dari database
     $sql = "SELECT * FROM user";
-    $query = mysqli_query($koneksi, $sql);
+    $stmt = $koneksi->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
     ?>
 
     <div>
@@ -27,7 +73,7 @@
         <form action="new-user.php" method="GET">
             <button type="submit">Tambah</button>
         </form>
-        <table border="1">
+        <table>
             <tr>
                 <th>No.</th>
                 <th>Username</th>
@@ -36,15 +82,14 @@
                 <th>Diubah pada</th>
                 <th colspan="2">Aksi</th>
             </tr>
-            <!-- ambil (fetch) data user satu per satu, lalu tampilkan -->
             <?php $i = 1; ?>
-            <?php while ($user = mysqli_fetch_array($query)) : ?>
+            <?php while ($user = $result->fetch_assoc()) : ?>
                 <tr>
                     <td><?= $i ?></td>
-                    <td><?= $user["username"] ?></td>
-                    <td><?= $user["level"] ?></td>
-                    <td><?= $user["created_at"] ?></td>
-                    <td><?= $user["updated_at"] ?></td>
+                    <td><?= htmlspecialchars($user["username"]) ?></td>
+                    <td><?= htmlspecialchars($user["level"]) ?></td>
+                    <td><?= htmlspecialchars($user["created_at"]) ?></td>
+                    <td><?= htmlspecialchars($user["updated_at"]) ?></td>
                     <td>
                         <form action="read-user.php" method="GET">
                             <input type="hidden" name="id" value='<?= $user["id"] ?>'>
@@ -60,10 +105,11 @@
                 </tr>
                 <?php $i++; ?>
             <?php endwhile ?>
-        </table>
+        </table>        
+       
     </div>
+
     <script>
-        // tampilkan konfirmasi sebelum hapus
         function konfirmasi(form) {
             formData = new FormData(form);
             id = formData.get("id");

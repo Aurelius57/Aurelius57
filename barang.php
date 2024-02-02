@@ -1,8 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Barang</title>
+    <meta charset="UTF-8">
+    <title>Data Barang</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+            background-color: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 5px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        form {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 5px;
+        }
+
+        div {
+            text-align: center;
+        }
+    </style>
 </head>
 
 <body>
@@ -12,7 +58,9 @@
     require "koneksi.php"; 
     
     $sql = "SELECT * FROM barang";
-    $query = mysqli_query ($koneksi, $sql);
+    $stmt = $koneksi->prepare($sql);
+    $stmt->execute();
+    $result = $stmt->get_result();
     ?>
 
     <div>
@@ -20,7 +68,7 @@
         <form action="new-barang.php" method="GET">
             <button type="submit">Tambah</button>
         </form>
-        <table border="1">
+        <table>
             <tr>
                 <th>No.</th>
                 <th>Nama</th>
@@ -34,25 +82,25 @@
             </tr>
 
             <?php $i = 1; ?>
-            <?php while ($barang = mysqli_fetch_array($query)) : ?>
+            <?php while ($barang = $result->fetch_assoc()) : ?>
                 <tr>
                     <td><?= $i ?></td>
-                    <td><?= $barang ["nama"] ?></td>
-                    <td><?= $barang ["kategori"] ?></td>
-                    <td><?= $barang ["stok"] ?></td>
-                    <td><?= $barang ["harga_beli"] ?></td>
-                    <td><?= $barang ["harga_jual"] ?></td>
-                    <td><?= $barang ["created_at"] ?></td>
-                    <td><?= $barang ["updated_at"] ?></td>
+                    <td><?= htmlspecialchars($barang["nama"]) ?></td>
+                    <td><?= htmlspecialchars($barang["kategori"]) ?></td>
+                    <td><?= htmlspecialchars($barang["stok"]) ?></td>
+                    <td><?= htmlspecialchars($barang["harga_beli"]) ?></td>
+                    <td><?= htmlspecialchars($barang["harga_jual"]) ?></td>
+                    <td><?= htmlspecialchars($barang["created_at"]) ?></td>
+                    <td><?= htmlspecialchars($barang["updated_at"]) ?></td>
                     <td>
                         <form action="read-barang.php" method="GET">
-                            <input type="hidden" name="id" value='<?=$barang["id"] ?>'>
+                            <input type="hidden" name="id" value='<?= $barang["id"] ?>'>
                             <button type="submit">Lihat</button>
                         </form>
                     </td>
                     <td>
-                        <form action="delete-barang.php" method="POST" onsubmit="retrun konfirmasi(this)">
-                            <input type="hidden" name="id" value='<?=$barang["id"] ?>'>
+                        <form action="delete-barang.php" method="POST" onsubmit="return konfirmasi(this)">
+                            <input type="hidden" name="id" value='<?= $barang["id"] ?>'>
                             <button type="submit">Delete</button>
                         </form>                    
                     </td>
@@ -63,9 +111,9 @@
     </div>
     <script>
         function konfirmasi(form) {
-            formdata = new FormData(form);
+            formData = new FormData(form);
             id = formData.get("id");
-            retrun confirm('Hapus barang '${id}'?');
+            return confirm(`Hapus barang '${id}'?`);
         }
     </script>
 </body>
